@@ -8,7 +8,7 @@ const account1 = {
 };
 
 const account2 = {
-  owner: 'Mina Çetin',
+  owner: 'Duygu Acele',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 1111,
@@ -22,7 +22,7 @@ const account3 = {
 };
 
 const account4 = {
-  owner: 'Nur Çetin',
+  owner: 'Kudret Acele',
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 1111,
@@ -60,7 +60,7 @@ const displayMovements = function (movements, sort = false) {
   const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
 
   movs.forEach(function (mov, i) {
-    const type = mov > 0 ? 'deposit' : 'withdrawal';
+    const type = mov > 0 ? 'yatırma' : 'çekme';
 
     const html = `
       <div class="movements__row">
