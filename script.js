@@ -27,8 +27,14 @@ const account4 = {
   interestRate: 1,
   pin: 1111,
 };
+const account5 = {
+  owner: 'Batuhan Acele',
+  movements: [430, 1000, 700, 50, 90],
+  interestRate: 1,
+  pin: 1111,
+};
 
-const accounts = [account1, account2, account3, account4];
+const accounts = [account1, account2, account3, account4,account5];
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
 const labelBalance = document.querySelector('.balance__value');
