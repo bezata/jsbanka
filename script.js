@@ -29,7 +29,7 @@ const account4 = {
 };
 const account5 = {
   owner: 'Batuhan Acele',
-  movements: [430, 1000, 700, 50, 90],
+  movements: [10],
   interestRate: 1,
   pin: 1111,
 };
