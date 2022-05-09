@@ -33,8 +33,14 @@ const account5 = {
   interestRate: 1,
   pin: 1111,
 };
+const account6 = {
+  owner: 'Hakan Balaban',
+  movements: [10000],
+  interestRate: 1,
+  pin: 1111,
+};
 
-const accounts = [account1, account2, account3, account4,account5];
+const accounts = [account1, account2, account3, account4,account5,account6];
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
 const labelBalance = document.querySelector('.balance__value');
