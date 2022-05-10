@@ -39,8 +39,14 @@ const account6 = {
   interestRate: 1,
   pin: 1111,
 };
+const account7 = {
+  owner: 'Emir Şen',
+  movements: [10000,-10,-50],
+  interestRate: 1,
+  pin: 1111,
+};
 
-const accounts = [account1, account2, account3, account4,account5,account6];
+const accounts = [account1, account2, account3, account4,account5,account6,account7];
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
 const labelBalance = document.querySelector('.balance__value');
