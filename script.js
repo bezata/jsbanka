@@ -7,36 +7,10 @@ const account1 = {
   pin: 1111,
 };
 
-const account2 = {
-  owner: 'Duygu Acele',
-  movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
-  interestRate: 1.5,
-  pin: 1111,
-};
-
 const account3 = {
   owner: 'Eren Can',
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
-  pin: 1111,
-};
-
-const account4 = {
-  owner: 'Kudret Acele',
-  movements: [430, 1000, 700, 50, 90],
-  interestRate: 1,
-  pin: 1111,
-};
-const account5 = {
-  owner: 'Batuhan Acele',
-  movements: [10],
-  interestRate: 1,
-  pin: 1111,
-};
-const account6 = {
-  owner: 'Hakan Balaban',
-  movements: [10000],
-  interestRate: 1,
   pin: 1111,
 };
 const account7 = {
