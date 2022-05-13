@@ -283,11 +283,6 @@ btnSort.addEventListener('click', function (e) {
 });
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
-
 const logOutTimer = function () {
   let t = 300;
   const ticket = function () {
