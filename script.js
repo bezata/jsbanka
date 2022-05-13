@@ -15,6 +15,8 @@ const account1 = {
     '2022-01-11T23:36:17.929Z',
     '2022-01-09T10:51:36.790Z',
   ],
+  currency: 'TRY',
+  locale: 'tr-TR', // de-DE
 };
 
 const account2 = {
@@ -32,6 +34,8 @@ const account2 = {
     '2022-01-11T23:36:17.929Z',
     '2022-01-09T10:51:36.790Z',
   ],
+  currency: 'TRY',
+  locale: 'tr-TR', // de-DE
 };
 
 const account3 = {
@@ -49,8 +53,8 @@ const account3 = {
     '2022-01-11T23:36:17.929Z',
     '2022-01-09T10:51:36.790Z',
   ],
-  currency: 'TRY',
-  locale: 'pt-PT', // de-DE
+  currency: 'USD',
+  locale: 'en-GB', // de-DE
 };
 
 const account4 = {
@@ -69,7 +73,7 @@ const account4 = {
     '2022-01-09T10:51:36.790Z',
   ],
   currency: 'TRY',
-  locale: 'pt-PT', // de-DE
+  locale: 'tr-TR', // de-DE
 };
 
 const accounts = [account1, account2, account3, account4];
@@ -97,6 +101,7 @@ const inputTransferAmount = document.querySelector('.form__input--amount');
 const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
+let currentAccount, timer;
 const formatMovements = function (date) {
   const calcDays = (d1, d2) =>
     Math.abs(Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
@@ -114,43 +119,46 @@ const formatMovements = function (date) {
   const minute = `${date.getMinutes()}`.padStart(2, 0);
   return `${day}/${month}/${year}, ${hour}:${minute}`;
 };
+const formatC = function (value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
 const displayMovements = function (acc, sort = true) {
   containerMovements.innerHTML = '';
-  const movs = sort
-    ? acc.movements.slice().sort((a, b) => a - b)
-    : acc.movements;
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'yatırma' : 'çekme';
     const date = new Date(acc.movementsDates[i]);
     const displayDate = formatMovements(date);
+    const formatMov = formatC(mov, acc.locale, acc.currency);
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
         <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.toFixed(2)}₺</div>
+        <div class="movements__value">${formatMov}</div>
       </div>
     `;
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
-
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}₺`;
+  labelBalance.textContent = formatC(acc.balance, acc.locale, acc.currency);
 };
-
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes}₺`;
+  labelSumIn.textContent = formatC(incomes, acc.locale, acc.currency);
 
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out)}₺`;
+  labelSumOut.textContent = formatC(Math.abs(out), acc.locale, acc.currency);
 
   const interest = acc.movements
     .filter(mov => mov > 0)
@@ -159,7 +167,7 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}₺`;
+  labelSumInterest.textContent = formatC(interest, acc.locale, acc.currency);
 };
 
 const createUsernames = function (accs) {
@@ -180,7 +188,6 @@ const updateUI = function (acc) {
 
   calcDisplaySummary(acc);
 };
-let currentAccount;
 
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
@@ -188,8 +195,6 @@ btnLogin.addEventListener('click', function (e) {
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value
   );
-  console.log(currentAccount);
-
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
     labelWelcome.textContent = `Tekrar hoşgeldin, ${
       currentAccount.owner.split(' ')[0]
@@ -197,6 +202,19 @@ btnLogin.addEventListener('click', function (e) {
     containerApp.style.opacity = 100;
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
+    const locale = navigator.language;
+    const now = new Date();
+    const option = {
+      weekday: 'long',
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    };
+    if (timer) clearInterval(timer);
+    timer = logOutTimer();
+    labelDate.textContent = new Intl.DateTimeFormat(locale, option).format(now);
     updateUI(currentAccount);
   }
 });
@@ -221,6 +239,8 @@ btnTransfer.addEventListener('click', function (e) {
     receiverAcc.movementsDates.push(new Date().toISOString());
     updateUI(currentAccount);
   }
+  clearInterval(timer);
+  timer = logOutTimer();
 });
 
 btnLoan.addEventListener('click', function (e) {
@@ -232,11 +252,14 @@ btnLoan.addEventListener('click', function (e) {
     updateUI(currentAccount);
   }
   inputLoanAmount.value = '';
+  clearInterval(timer);
+  timer = logOutTimer();
 });
 
 btnClose.addEventListener('click', function (e) {
   e.preventDefault();
-
+  if (timer) clearInterval(timer);
+  timer = logOutTimer();
   if (
     inputCloseUsername.value === currentAccount.username &&
     Number(inputClosePin.value) === currentAccount.pin
@@ -265,12 +288,20 @@ currentAccount = account1;
 updateUI(currentAccount);
 containerApp.style.opacity = 100;
 
-const now = new Date();
-const day = `${now.getDate()}`.padStart(2, 0);
-const month = `${now.getMonth() + 1}`.padStart(2, 0);
-const year = now.getFullYear();
-const hour = `${now.getHours()}`;
-const minute = `${now.getMinutes()}`.padStart(2, 0);
-labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minute}`;
-
-// day //month // year
+const logOutTimer = function () {
+  let t = 300;
+  const ticket = function () {
+    const minute = String(Math.trunc(t / 60)).padStart(2, 0);
+    const second = String(Math.trunc(t % 60)).padStart(2, 0);
+    labelTimer.textContent = `${minute}:${second}`;
+    t--;
+    if (t === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Lütfen tekrar giriş yapın';
+      containerApp.style.opacity = 0;
+    }
+  };
+  ticket();
+  const timer = setInterval(ticket, 1000);
+  return timer;
+};
