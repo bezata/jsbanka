@@ -206,7 +206,6 @@ btnLogin.addEventListener('click', function (e) {
     const now = new Date();
     const option = {
       weekday: 'long',
-      minute: 'numeric',
       day: 'numeric',
       month: 'long',
       year: 'numeric',
